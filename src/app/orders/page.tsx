@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 
 const page = async() => {
-    const orders:OrderType[] = await client.fetch(`*[_type == 'order'] | order(_createdAt desc)`)
+    const orders:OrderType[] = await client.fetch(`*[_type == 'order'] | order(_createdAt desc)`, {}, { cache: "no-store" })
   return (
     <div className="container mx-auto w-full  py-10">
       <h1 className="text-2xl font-bold mb-5 mx-3">Orders</h1>
