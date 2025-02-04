@@ -12,8 +12,8 @@ export default async function Page({
     params: Promise<{ slug: string }>
   }) {
     const slug = (await params).slug
-    const order:OrderType = await client.fetch(`*[_type == 'order' && orderId == $slug] | order(_createdAt desc)[0] `, {slug})
-    const product:ProductType[] = await client.fetch(`*[_type == 'products']`) 
+    const order:OrderType = await client.fetch(`*[_type == 'order' && orderId == $slug] | order(_createdAt desc)[0] `, {slug},  { cache: "no-store" })
+    const product:ProductType[] = await client.fetch(`*[_type == 'products']`, {}, { cache: "no-store" }) 
     const filteredProducts = product.filter((item) => order.products.some((cartItem) => cartItem.id === item._id));
 
   return (
@@ -25,7 +25,7 @@ export default async function Page({
       <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full">
         <div className="p-6 bg-gray-50 border-b border-gray-200">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900 break-words w-[80%]">Order ID: {order._id}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 break-words w-[80%]">Order ID: {order.orderId}</h1>
             <div className="relative">
               <OrderStatus status={order.status.charAt(0).toUpperCase() + order.status.slice(1)} id={order._id}/>
             </div>

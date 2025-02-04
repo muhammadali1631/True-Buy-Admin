@@ -2,31 +2,40 @@
 import { client } from '@/sanity/lib/client';
 import { ChevronDown } from 'lucide-react'
 import React, { useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify';
 
 
-async function updateStatus(status: string, id:string) {
-  try {
-    const updatedDoc = await client
-      .patch(id) // Document ID to update
-      .set({status,}) // Fields to update
-      .commit(); // Perform the update
 
-    console.log("Updated document:", updatedDoc);
-  } catch (error) {
-    console.error("Update failed:", error);
-  }
-}
+
 
 const statusOptions = ["Processing", "Shipped", "Completed", "Cancelled"]
 const OrderStatus = ({status , id}: {status: string, id:string}) => {
     const [Status, setStatus] = useState(status)
   const [isEditingStatus, setIsEditingStatus] = useState(false)
+  const [showSave, setShowSave] = useState(false)
 
   const handleStatusChange = (newStatus: string) => {
     setStatus(newStatus)
     setIsEditingStatus(false)
-    // In a real application, you would also send this update to your backend
-    // updateOrderStatus(orderDetails.id, newStatus)
+    setShowSave(true)
+  }
+
+  async function updateStatus(status: string, id:string) {
+    try {
+
+      await client
+        .patch(id) 
+        .set({status,})
+        .commit();
+      setShowSave(false)
+      toast.success('Status has been updated',{
+        position: "top-right",
+        autoClose: 2000,  
+      })
+
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
   }
 
   const getStatusColor = (status: string) => {
@@ -43,8 +52,11 @@ const OrderStatus = ({status , id}: {status: string, id:string}) => {
         return "bg-yellow-100 text-yellow-800"
     }
   }
+
   return (
     <div>
+    <ToastContainer />
+
         {isEditingStatus ? (
                 <div className="relative">
                   <select
@@ -65,13 +77,13 @@ const OrderStatus = ({status , id}: {status: string, id:string}) => {
               ) : (
                 <button
                   onClick={() => setIsEditingStatus(true)}
-                  className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(Status)}`}
+                  className={`px-3 py-1 rounded-full flex text-sm font-semibold ${getStatusColor(Status)}`}
                 >
-                  {Status}
+                  {Status}<ChevronDown/>
                 </button>
               )}
 
-        {status !== Status && <div className='left-0 w-screen flex justify-center fixed top-8 z-10'>
+        {showSave && <div className='left-0 w-screen flex justify-center fixed top-8 z-10'>
           <button className='bg-black font-semibold shadow-lg text-white text-2xl py-2 px-4 rounded-lg  ' onClick={()=> updateStatus(Status, id)}>Save</button>
         </div>}
     </div>
