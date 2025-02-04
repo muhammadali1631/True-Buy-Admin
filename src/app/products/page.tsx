@@ -16,7 +16,7 @@ const Page = () => {
     const products: ProductType[] = await client.fetch(
       `*[_type == 'products'] | order(_createdAt desc)`,
       {},
-      { cache: "no-store" }
+      { next: { revalidate: 0 }}
     );
     setProducts(products)
   }
