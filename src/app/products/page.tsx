@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 
-const page = () => {
+const Page = () => {
   const [products, setProducts] = useState<ProductType[]>()
   const getProducts = async() =>{
 
