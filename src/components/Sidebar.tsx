@@ -28,16 +28,16 @@ const Sidebar = () => {
             >
                 <h1 className="text-2xl font-bold text-center">True Buy</h1>
                 <nav className="mt-8">
-                    <Link href="/" className="block py-2 hover:bg-gray-200 rounded px-4">
+                    <Link href="/" className="block py-2 hover:bg-gray-200 rounded px-4" onClick={toggle}>
                         Dashboard
                     </Link>
-                    <Link href="/products" className="block py-2 hover:bg-gray-200 rounded px-4">
+                    <Link href="/products" className="block py-2 hover:bg-gray-200 rounded px-4" onClick={toggle}> 
                         Products
                     </Link>
-                    <Link href="/orders" className="block py-2 hover:bg-gray-200 rounded px-4">
+                    <Link href="/orders" className="block py-2 hover:bg-gray-200 rounded px-4" onClick={toggle}>
                         Orders
                     </Link>
-                    <Link href="/users" className="block py-2 hover:bg-gray-200 rounded px-4">
+                    <Link href="/users" className="block py-2 hover:bg-gray-200 rounded px-4" onClick={toggle}>
                         Users
                     </Link>
                 </nav>

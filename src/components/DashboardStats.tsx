@@ -1,17 +1,8 @@
 import { client } from "@/sanity/lib/client";
-import { FaChartBar, FaGift, FaShoppingCart, FaWallet, FaTasks, FaHome } from "react-icons/fa";
 import { BadgeDollarSign, ArrowRightLeft, Users, ShoppingBasket } from 'lucide-react';
 import Widget from "./Widget";
 import { OrderType } from "@/types/order";
 
-const stats = [
-  { title: "Earnings", value: "$340.5", icon: <FaChartBar />, bgColor: "bg-purple-500" },
-  { title: "Spend this month", value: "$642.39", icon: <FaGift />, bgColor: "bg-purple-500" },
-  { title: "Sales", value: "$574.34", icon: <FaShoppingCart />, bgColor: "bg-purple-500" },
-  { title: "Your Balance", value: "$1,000", icon: <FaWallet />, bgColor: "bg-purple-500" },
-  { title: "New Tasks", value: "145", icon: <FaTasks />, bgColor: "bg-purple-500" },
-  { title: "Total Projects", value: "$2433", icon: <FaHome />, bgColor: "bg-purple-500" },
-];
 
 const DashboardStats = async() => {
   const orders:OrderType[] = await client.fetch(`*[_type == 'order']`, {}, {cache: 'no-store'})
@@ -31,10 +22,10 @@ const DashboardStats = async() => {
   });
   return (
     <div className="w-full flex flex-wrap gap-4 justify-around my-10">
-      <Widget title='Total Sales' icon={<BadgeDollarSign size={60}/>} value={`$ ${totalCost.toFixed(2).toString()}`}/>
-      <Widget title='Orders' icon={<ArrowRightLeft />} value={orders.length}/>
-      <Widget title='Users' icon={<Users />} value={users.length}/>
-      <Widget title='Products' icon={<ShoppingBasket />} value={products.length}/>
+      <Widget title='Total Sales' Icon={BadgeDollarSign } value={`$ ${totalCost.toFixed(2).toString()}`}/>
+      <Widget title='Orders' Icon={ArrowRightLeft} value={orders.length}/>
+      <Widget title='Users' Icon={Users} value={users.length}/>
+      <Widget title='Products' Icon={ShoppingBasket} value={products.length}/>
     </div>
   );
 };

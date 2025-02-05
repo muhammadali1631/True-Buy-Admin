@@ -172,7 +172,7 @@ export default function ProductEditForm({ product }: { product: Product }) {
     }
   }
 
-  const { getRootProps, getInputProps } = useDropzone({
+  useDropzone({
     accept: { "image/*": [] },
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, ""), // Placeholder color, will be handled in map
   })
@@ -337,7 +337,7 @@ export default function ProductEditForm({ product }: { product: Product }) {
               </div>
               <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer">
                 <input {...getInputProps()} />
-                <p>Drag 'n' drop some files here, or click to select files for {color}</p>
+                <p>Drag n drop some files here&apos; or click to select files for {color}</p>
               </div>
             </div>
           )
