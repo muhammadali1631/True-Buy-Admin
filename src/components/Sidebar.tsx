@@ -37,8 +37,8 @@ const Sidebar = () => {
                     <Link href="/orders" className="block py-2 hover:bg-gray-200 rounded px-4">
                         Orders
                     </Link>
-                    <Link href="/customers" className="block py-2 hover:bg-gray-200 rounded px-4">
-                        Customers
+                    <Link href="/users" className="block py-2 hover:bg-gray-200 rounded px-4">
+                        Users
                     </Link>
                 </nav>
             </div>
