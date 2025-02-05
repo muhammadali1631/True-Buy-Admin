@@ -53,10 +53,7 @@ export default function ProductEditForm({ product }: { product: Product }) {
   const [newImages, setNewImages] = useState<{ [color: string]: File[] }>({})
   const [isUploading, setIsUploading] = useState(false)
 
-  useEffect(() => {
-    console.log("Current formData:", formData)
-    console.log("Current newImages:", newImages)
-  }, [formData, newImages])
+  
 
   const onDrop = useCallback((acceptedFiles: File[], color: string) => {
     console.log(`Dropped files for color ${color}:`, acceptedFiles)
@@ -96,8 +93,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
     e.preventDefault()
     setIsUploading(true)
     try {
-      console.log("Starting image upload...")
-      // Upload new images
       const uploadedImages = await Promise.all(
         Object.entries(newImages).flatMap(([color, files]) =>
           files.map((file) =>
@@ -109,7 +104,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
         ),
       )
 
-      console.log("All images uploaded:", uploadedImages)
 
       // Prepare the updated images array
       const updatedImages = formData.colors.map((color) => {
