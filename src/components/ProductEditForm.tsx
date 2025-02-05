@@ -289,7 +289,8 @@ export default function ProductEditForm({ product }: { product: Product }) {
           return (
             <div key={color} className="space-y-2">
               <h4 className="font-semibold">{color}</h4>
-              <div className="flex flex-wrap gap-2">
+              <div {...getRootProps()} className="flex flex-wrap gap-2">
+                <input {...getInputProps()} />
                 {formData.images
                   .find((img) => img.color === color)
                   ?.image.map((img, index) => (
