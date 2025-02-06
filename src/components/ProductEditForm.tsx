@@ -125,7 +125,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
   const [isUploading, setIsUploading] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[], color: string) => {
-    console.log(`Dropped files for color ${color}:`, acceptedFiles);
     setNewImages((prev) => ({
       ...prev,
       [color]: [...(prev[color] || []), ...acceptedFiles],
@@ -162,19 +161,16 @@ export default function ProductEditForm({ product }: { product: Product }) {
     e.preventDefault();
     setIsUploading(true);
     try {
-      console.log("Starting image upload...");
       const uploadedImages = await Promise.all(
         Object.entries(newImages).flatMap(([color, files]) =>
           files.map((file) =>
             client.assets.upload("image", file).then((asset) => {
-              console.log(`Uploaded image for color ${color}:`, asset);
               return { asset, color };
             }),
           ),
         ),
       );
 
-      console.log("All images uploaded:", uploadedImages);
 
       const updatedImages: Image[] = formData.colors.map((color) => {
         const existingImages = formData.images.find((img) => img.color === color)?.image || [];
@@ -185,7 +181,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
             asset: { _type: "reference" as const, _ref: img.asset._id },
           }));
 
-        console.log(`Updated images for color ${color}:`, [...existingImages, ...newUploadedImages]);
 
         return {
           _key: color,
@@ -194,7 +189,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
         };
       });
 
-      console.log("Final updated images:", updatedImages);
 
       // Update the product in Sanity
       const updatedProduct = await client
@@ -217,7 +211,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
         })
         .commit();
 
-      console.log("Product updated in Sanity:", updatedProduct);
 
       toast.success("Product has been updated", {
         position: "top-right",
@@ -241,10 +234,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
     }
   };
 
-  useEffect(() => {
-    console.log("Current formData:", formData);
-    console.log("Current newImages:", newImages);
-  }, [formData, newImages]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl mx-auto my-7 px-4">
