@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback } from "react"
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -53,6 +53,8 @@ export default function ProductEditForm({ product }: { product: Product }) {
   const [newImages, setNewImages] = useState<{ [color: string]: File[] }>({})
   const [isUploading, setIsUploading] = useState(false)
 
+  
+
   const onDrop = useCallback((acceptedFiles: File[], color: string) => {
     console.log(`Dropped files for color ${color}:`, acceptedFiles)
     setNewImages((prev) => ({
@@ -91,8 +93,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
     e.preventDefault()
     setIsUploading(true)
     try {
-      console.log("Starting image upload...")
-      // Upload new images
       const uploadedImages = await Promise.all(
         Object.entries(newImages).flatMap(([color, files]) =>
           files.map((file) =>
@@ -104,7 +104,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
         ),
       )
 
-      console.log("All images uploaded:", uploadedImages)
 
       // Prepare the updated images array
       const updatedImages = formData.colors.map((color) => {
@@ -156,11 +155,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
       })
       // Reset new images state
       setNewImages({})
-      // Update formData with the new images
-      setFormData((prev) => ({
-        ...prev,
-        images: updatedImages,
-      }))
     } catch (error) {
       console.error("Error updating product:", error)
       toast.error("Failed to update product", {
@@ -172,23 +166,10 @@ export default function ProductEditForm({ product }: { product: Product }) {
     }
   }
 
-  const { getRootProps, getInputProps } = useDropzone({
+  useDropzone({
     accept: { "image/*": [] },
-    onDrop: (acceptedFiles) => onDrop(acceptedFiles, ""), // Placeholder color, will be handled within onDrop
+    onDrop: (acceptedFiles) => onDrop(acceptedFiles, ""), // Placeholder color, will be handled in map
   })
-
-  const colorDropzones = formData.colors.map((color) => {
-    const { getRootProps: getColorRootProps, getInputProps: getColorInputProps } = useDropzone({
-      accept: { "image/*": [] },
-      onDrop: (acceptedFiles) => onDrop(acceptedFiles, color),
-    })
-    return { getRootProps: getColorRootProps, getInputProps: getColorInputProps, color }
-  })
-
-  useEffect(() => {
-    console.log("Current formData:", formData)
-    console.log("Current newImages:", newImages)
-  }, [formData, newImages])
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl mx-auto my-7 px-4">
@@ -299,11 +280,17 @@ export default function ProductEditForm({ product }: { product: Product }) {
 
       <div className="space-y-4">
         <Label>Images</Label>
-        {colorDropzones.map(({ getRootProps, getInputProps, color }) => {
+        {formData.colors.map((color) => {
+          const { getRootProps, getInputProps } = useDropzone({
+            accept: { "image/*": [] },
+            onDrop: (acceptedFiles) => onDrop(acceptedFiles, color),
+          })
+
           return (
             <div key={color} className="space-y-2">
               <h4 className="font-semibold">{color}</h4>
-              <div className="flex flex-wrap gap-2">
+              <div {...getRootProps()} className="flex flex-wrap gap-2">
+                <input {...getInputProps()} />
                 {formData.images
                   .find((img) => img.color === color)
                   ?.image.map((img, index) => (
@@ -345,7 +332,7 @@ export default function ProductEditForm({ product }: { product: Product }) {
               </div>
               <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer">
                 <input {...getInputProps()} />
-                <p>Drag 'n' drop some files here, or click to select files for {color}</p>
+                <p>Drag n drop some files here&apos; or click to select files for {color}</p>
               </div>
             </div>
           )
