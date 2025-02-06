@@ -20,13 +20,13 @@ export interface ProductType {
     cost: number;
   }
 
-interface ImageVariant {
+export interface ImageVariant {
   _key: string;
   color: string;
   image: Image[];
 }
 
-interface Image {
+export interface Image {
   _type: string;
   asset: {
     _ref: string;

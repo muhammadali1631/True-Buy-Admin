@@ -1,5 +1,7 @@
+// import UpdateProduct from "@/components/EditProduct";
 import ProductEditForm from "@/components/ProductEditForm";
 import { client } from "@/sanity/lib/client";
+
 
 export default async function Page({
   params,
@@ -14,6 +16,7 @@ export default async function Page({
   return (
     <div>
         <ProductEditForm product={product}/>
+        {/* <UpdateProduct product={product}/> */}
     </div>
   )
 }

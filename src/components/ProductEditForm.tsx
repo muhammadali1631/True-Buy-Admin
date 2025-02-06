@@ -61,11 +61,6 @@ export default function ProductEditForm({ product }: { product: Product }) {
     }))
   }, [])
 
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: { "image/*": [] },
-    onDrop: (acceptedFiles) => onDrop(acceptedFiles, "default"),
-  })
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -176,6 +171,19 @@ export default function ProductEditForm({ product }: { product: Product }) {
       setIsUploading(false)
     }
   }
+
+  useDropzone({
+    accept: { "image/*": [] },
+    onDrop: (acceptedFiles) => onDrop(acceptedFiles, color),
+  })
+
+  const colorDropzones = formData.colors.map((color) => {
+    const { getRootProps, getInputProps } = useDropzone({
+      accept: { "image/*": [] },
+      onDrop: (acceptedFiles) => onDrop(acceptedFiles, color),
+    })
+    return { getRootProps, getInputProps, color }
+  })
 
   useEffect(() => {
     console.log("Current formData:", formData)
@@ -291,63 +299,57 @@ export default function ProductEditForm({ product }: { product: Product }) {
 
       <div className="space-y-4">
         <Label>Images</Label>
-        {formData.colors.map((color) => (
-          <div key={color} className="space-y-2">
-            <h4 className="font-semibold">{color}</h4>
-            <div className="flex flex-wrap gap-2">
-              {formData.images
-                .find((img) => img.color === color)
-                ?.image.map((img, index) => (
+        {colorDropzones.map(({ getRootProps, getInputProps, color }) => {
+          return (
+            <div key={color} className="space-y-2">
+              <h4 className="font-semibold">{color}</h4>
+              <div className="flex flex-wrap gap-2">
+                {formData.images
+                  .find((img) => img.color === color)
+                  ?.image.map((img, index) => (
+                    <div key={index} className="relative">
+                      <Image
+                        src={urlFor(img).url() || "/placeholder.svg"}
+                        alt={`${color} product image ${index + 1}`}
+                        width={100}
+                        height={100}
+                        className="rounded-lg object-cover h-[100px] w-[100px]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(color, index)}
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                      >
+                        X
+                      </button>
+                    </div>
+                  ))}
+                {newImages[color]?.map((file, index) => (
                   <div key={index} className="relative">
                     <Image
-                      src={urlFor(img).url() || "/placeholder.svg"}
-                      alt={`${color} product image ${index + 1}`}
+                      src={URL.createObjectURL(file) || "/placeholder.svg"}
+                      alt={`New ${color} product image ${index + 1}`}
                       width={100}
                       height={100}
                       className="rounded-lg object-cover h-[100px] w-[100px]"
                     />
                     <button
                       type="button"
-                      onClick={() => handleRemoveImage(color, index)}
+                      onClick={() => handleRemoveNewImage(color, index)}
                       className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
                     >
                       X
                     </button>
                   </div>
                 ))}
-              {newImages[color]?.map((file, index) => (
-                <div key={index} className="relative">
-                  <Image
-                    src={URL.createObjectURL(file) || "/placeholder.svg"}
-                    alt={`New ${color} product image ${index + 1}`}
-                    width={100}
-                    height={100}
-                    className="rounded-lg object-cover h-[100px] w-[100px]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveNewImage(color, index)}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                  >
-                    X
-                  </button>
-                </div>
-              ))}
+              </div>
+              <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer">
+                <input {...getInputProps()} />
+                <p>Drag &apos;n&apos; drop some files here, or click to select files for {color}</p>
+              </div>
             </div>
-            <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer">
-              <input
-                {...getInputProps()}
-                onChange={(e) => {
-                  const files = e.target.files
-                  if (files) {
-                    onDrop(Array.from(files), color)
-                  }
-                }}
-              />
-              <p>Drag &apos;n&apos; drop some files here, or click to select files for {color}</p>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       <Button type="submit" className="w-full" disabled={isUploading}>
