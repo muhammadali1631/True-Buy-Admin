@@ -191,7 +191,7 @@ export default function ProductEditForm({ product }: { product: Product }) {
 
 
       // Update the product in Sanity
-      const updatedProduct = await client
+       await client
         .patch(product._id)
         .set({
           discountPercent: Number(formData.discountPercent),
